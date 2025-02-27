@@ -27,25 +27,77 @@ let rec getElementByIndex index list =
     | _ :: tail -> getElementByIndex (index - 1) tail    
 
 
-let list1 = [1; 2; 3]
-let list2 = [4; 5; 6]
+let showMenu () =
+    printfn "\nВыберите операцию:"
+    printfn "1 - Добавить элемент"
+    printfn "2 - Удалить элемент"
+    printfn "3 - Найти элемент"
+    printfn "4 - Сцепить два списка"
+    printfn "5 - Получить элемент по индексу"
+    printfn "0 - Выход"
+    printf "Ваш выбор: "
     
-printfn "Оригинальный список: %A" list1
+let rec main list =
+    showMenu()
+    let choice = Console.ReadLine() |> int
+    
+    match choice with
+    | 1 -> 
+        printf "Введите элемент для добавления: "
+        let element = Console.ReadLine() |> int
+        let newList = addElement element list
+        printfn "Обновленный список: %A" newList
+        main newList
+        
+    | 2 ->
+        printf "Введите элемент для удаления: "
+        let element = Console.ReadLine() |> int
+        let newList = removeElement element list
+        printfn "Обновленный список: %A" newList
+        main newList
+        
+    | 3 ->
+        printf "Введите элемент для поиска: "
+        let element = Console.ReadLine() |> int
+        let isFound = findElement element list
+        printfn "Элемент найден: %b" isFound
+        main list
+        
+    | 4 ->
+        printf "Введите элементы второго списка через пробел: "
+        let input = Console.ReadLine()
+        let list2 = input.Split(' ') |> Array.toList |> List.map int
+        let concatenatedList = concatLists list list2
+        printfn "Результат сцепки списков: %A" concatenatedList
+        main concatenatedList
+        
+    | 5 ->
+        printf "Введите индекс элемента: "
+        let index = Console.ReadLine() |> int
+        try
+            let element = getElementByIndex index list
+            printfn "Элемент на индексе %d: %d" index element
+        with
+            | ex -> printfn "Ошибка: %s" ex.Message
+        main list
+        
+    | 0 -> 
+        printfn "Выход из программы."
+        
+    | _ -> 
+        printfn "Некорректный выбор. Попробуйте снова."
+        main list
 
-let addedList = addElement 0 list1
-printfn "После добавления 0: %A" addedList
+let inputInitialList () =
+    printf "Введите начальные элементы списка через пробел: "
+    let input = Console.ReadLine()
+    let initialList = input.Split(' ') |> Array.toList |> List.map int
+    initialList
 
-let removedList = removeElement 2 list1
-printfn "После удаления 2: %A" removedList
+let initialList = inputInitialList()
+printfn "Начальный список: %A" initialList
 
-let isFound = findElement 3 list1
-printfn "Элемент 3 найден: %b" isFound
-
-let concatenatedList = concatLists list1 list2
-printfn "Сцепка двух списков: %A" concatenatedList
-
-let elementAtIndex = getElementByIndex 1 list1
-printfn "Элемент на индексе 1: %d" elementAtIndex
+main initialList
 
 
 
